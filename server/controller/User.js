@@ -80,6 +80,32 @@ const signOut = async (req, res) => {
   }
 };
 
+const changeName = async (req, res) => {
+  const { newName } = req.body;
+
+  if (!newName) {
+    return res.status(404).json({ message: "Please provide the new username" });
+  }
+
+  const userId = req.userId;
+
+  try {
+    const response = await userModel.findByIdAndUpdate(userId, {
+      username: newName,
+    });
+
+    if (response) {
+      return res
+        .status(200)
+        .json({ message: "Successfully changed the username" });
+      y;
+    }
+  } catch (error) {
+    console.error(`Problem changing the username: ${error}`);
+    return res.status(500).json({ message: "Error changing the username" });
+  }
+};
+
 const deleteUser = async (req, res) => {
   const userId = req.userId;
 
@@ -94,6 +120,9 @@ const deleteUser = async (req, res) => {
   try {
     const result = await userModel.findByIdAndDelete(userId);
 
+    // remove the cookie
+    res.clearCookie("uid");
+
     if (!result) {
       return res.status(404).json({ message: "User not found" });
     }
@@ -106,4 +135,4 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = { signUp, signIn, signOut, deleteUser };
+module.exports = { signUp, signIn, signOut, deleteUser, changeName };
