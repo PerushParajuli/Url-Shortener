@@ -33,7 +33,7 @@ const signUp = async (req, res) => {
   }
 };
 
-const signin = async (req, res) => {
+const signIn = async (req, res) => {
   const { email, password } = req.body;
 
   try {
@@ -68,4 +68,16 @@ const signin = async (req, res) => {
   }
 };
 
-module.exports = { signUp, signin };
+const signOut = async (req, res) => {
+  try {
+    // Clear the cookie by setting its expiration date to past
+
+    res.clearCookie("uid", { httpOnly: true });
+    return res.status(200).json({ message: "Successfully logged out" });
+  } catch (error) {
+    console.error(`Error logging out: ${error}`);
+    return res.status(500).json({ message: "Internal server error" });
+  }
+};
+
+module.exports = { signUp, signIn, signOut };
