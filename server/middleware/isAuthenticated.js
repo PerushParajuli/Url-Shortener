@@ -11,7 +11,6 @@ const isAuthenticated = (req, res, next) => {
     const decoded = getUser(token);
     if (decoded) {
       req.userId = decoded.userId;
-      req.role = decoded.role
       return next();
     }
   } catch (err) {

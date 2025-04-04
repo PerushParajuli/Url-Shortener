@@ -1,4 +1,4 @@
-const jwt = require("jsonwebtoken")
+const jwt = require("jsonwebtoken");
 
 const setUser = (user) => {
   const { email, role } = user;
