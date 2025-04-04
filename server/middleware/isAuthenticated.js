@@ -10,6 +10,7 @@ const isAuthenticated = (req, res, next) => {
   try {
     const decoded = getUser(token);
     if (decoded) {
+      req.userId = decoded.userId;
       return next();
     }
   } catch (err) {

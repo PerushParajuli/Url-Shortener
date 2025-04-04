@@ -1,5 +1,5 @@
 const userModel = require("../model/User");
-const { setUser } = require("../services/auth");
+const { setUser, getUser } = require("../services/auth");
 const bcrypt = require("bcrypt");
 
 const signUp = async (req, res) => {
@@ -60,7 +60,7 @@ const signIn = async (req, res) => {
       .status(200)
       .cookie("uid", token, { maxAge: 3600000, httpOnly: true })
       .json({
-        message: `User: ${account.username} successfully logged in`,
+        message: `Username '${account.username}' successfully logged in`,
       });
   } catch (error) {
     console.error(`Error logging in: ${error}`);
@@ -80,4 +80,30 @@ const signOut = async (req, res) => {
   }
 };
 
-module.exports = { signUp, signIn, signOut };
+const deleteUser = async (req, res) => {
+  const userId = req.userId;
+
+  // Check if the user is logged in by extracting and verifying the token
+  const token = req.cookies.uid;
+
+  const decoded = getUser(token);
+
+  if (!decoded) {
+    return res.status(404).json({ message: "User not logged in" });
+  }
+  try {
+    const result = await userModel.findByIdAndDelete(userId);
+
+    if (!result) {
+      return res.status(404).json({ message: "User not found" });
+    }
+    res.status(200).json({ message: "User account deleted succesfully" });
+  } catch (error) {
+    console.error(`Error Deleting the User ${error}`);
+    res.status(500).json({
+      message: "Internal server error",
+    });
+  }
+};
+
+module.exports = { signUp, signIn, signOut, deleteUser };
