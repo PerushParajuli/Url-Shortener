@@ -7,6 +7,8 @@ const {
   signOut,
   changeName,
   deleteUser,
+  getAllUsers,
+  setRoleAdmin
 } = require("../controller/User");
 const checkRole = require("../middleware/checkRole");
 
@@ -15,6 +17,8 @@ router.post("/auth/signin", signIn);
 router.post("/signout", isAuthenticated, signOut);
 router.patch("/username", isAuthenticated, changeName);
 router.delete("/delete", isAuthenticated, deleteUser);
-router.get("/users", isAuthenticated, checkRole, userInfo); // for admin
+
+// Admin routes
+router.get("/admin/users", isAuthenticated, checkRole, getAllUsers);
 
 module.exports = router;

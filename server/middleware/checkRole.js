@@ -7,6 +7,11 @@ const checkRole = (req, res, next) => {
     const decoded = getUser(token);
     if (decoded) {
       const role = decoded.role;
+      if (role !== "admin") {
+        return res
+          .status(403)
+          .json({ message: "Only admins are allowed to access functionality" });
+      }
       req.role = role;
       return next();
     }

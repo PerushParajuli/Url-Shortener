@@ -27,9 +27,11 @@ const signUp = async (req, res) => {
       return res.status(400).json({ message: "Invalid email" });
     }
 
-    return res.status(200).json({ message: "User succesfully created!" });
+    return res
+      .status(200)
+      .json({ success: true, message: "User succesfully created!" });
   } catch (error) {
-    res.json({ message: `Error signing up a user: ${error}` });
+    res.json({ success: false, message: `Error signing up a user: ${error}` });
   }
 };
 
@@ -98,7 +100,6 @@ const changeName = async (req, res) => {
       return res
         .status(200)
         .json({ message: "Successfully changed the username" });
-      y;
     }
   } catch (error) {
     console.error(`Problem changing the username: ${error}`);
@@ -135,4 +136,55 @@ const deleteUser = async (req, res) => {
   }
 };
 
-module.exports = { signUp, signIn, signOut, deleteUser, changeName };
+// Admin functionalities
+const getAllUsers = async (req, res) => {
+  try {
+    const users = await userModel.find({});
+    if (!users) {
+      return res
+        .status(404)
+        .json({ success: false, message: "No users found" });
+    }
+    return res.status(200).json({ success: true, users: users });
+  } catch (error) {
+    console.error(`Problem fetching user data ${error}`);
+    return res
+      .status(500)
+      .json({ message: "Problem fetching user data by the admin" });
+  }
+};
+
+const setRoleAdmin = async (req, res) => {
+  const { userId, setRole } = req.body;
+  try {
+    const result = await userModel.findByIdAndUpdate(userId, {
+      role: setRole,
+    });
+    if (!result) {
+      return res.status(403).json({
+        success: false,
+        message: "Cannot assign the role to this user",
+      });
+    }
+    return res.status(201).json({
+      success: true,
+      message: "Successfully changed the role to admin",
+    });
+  } catch (error) {
+    console.error(`Problem while assigning role as admin: ${error}`);
+    return res.status(502).json({
+      success: false,
+      message: "You maynot have authority to assign admin",
+    });
+  }
+};
+
+module.exports = {
+  signUp,
+  signIn,
+  signOut,
+  deleteUser,
+  changeName,
+  getAllUsers,
+  setRoleAdmin,
+};
