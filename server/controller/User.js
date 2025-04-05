@@ -129,7 +129,10 @@ const deleteUser = async (req, res) => {
 // Admin functionalities
 const getAllUsers = async (req, res) => {
   try {
-    const users = await userModel.find({});
+    const users = await userModel
+      .find({})
+      .select("-password -profilePicture -_id -__v -createdAt -updatedAt");
+
     if (!users) {
       return res
         .status(404)
@@ -146,6 +149,13 @@ const getAllUsers = async (req, res) => {
 
 const setRole = async (req, res) => {
   const { userId, userRole } = req.body;
+
+  const availableRoles = ["user", "moderator", "sub admin"];
+  const isFromAvailableRoles = availableRoles.includes(userRole);
+
+  if (!isFromAvailableRoles) {
+    return res.status(403).json({ message: "Role not allowed!" });
+  }
 
   try {
     const result = await userModel.findByIdAndUpdate(userId, {
@@ -165,6 +175,7 @@ const setRole = async (req, res) => {
     });
   } catch (error) {
     console.error(`Problem while assigning role as admin: ${error}`);
+
     return res.status(502).json({
       success: false,
       message: "You maynot have authority to assign roles",
