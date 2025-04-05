@@ -3,9 +3,7 @@ const { setUser, getUser } = require("../services/auth");
 const bcrypt = require("bcrypt");
 
 const signUp = async (req, res) => {
-  const body = req.body;
-  const email = body.email;
-  const password = body.password;
+  const { email, password } = req.body;
 
   try {
     // check if the email already exists
@@ -110,14 +108,6 @@ const changeName = async (req, res) => {
 const deleteUser = async (req, res) => {
   const userId = req.userId;
 
-  // Check if the user is logged in by extracting and verifying the token
-  const token = req.cookies.uid;
-
-  const decoded = getUser(token);
-
-  if (!decoded) {
-    return res.status(404).json({ message: "User not logged in" });
-  }
   try {
     const result = await userModel.findByIdAndDelete(userId);
 
@@ -154,27 +144,30 @@ const getAllUsers = async (req, res) => {
   }
 };
 
-const setRoleAdmin = async (req, res) => {
-  const { userId, setRole } = req.body;
+const setRole = async (req, res) => {
+  const { userId, userRole } = req.body;
+
   try {
     const result = await userModel.findByIdAndUpdate(userId, {
-      role: setRole,
+      role: userRole,
     });
+
     if (!result) {
       return res.status(403).json({
         success: false,
-        message: "Cannot assign the role to this user",
+        message: "Cannot assign the role",
       });
     }
+
     return res.status(201).json({
       success: true,
-      message: "Successfully changed the role to admin",
+      message: `Successfully changed role to ${userRole}`,
     });
   } catch (error) {
     console.error(`Problem while assigning role as admin: ${error}`);
     return res.status(502).json({
       success: false,
-      message: "You maynot have authority to assign admin",
+      message: "You maynot have authority to assign roles",
     });
   }
 };
@@ -186,5 +179,5 @@ module.exports = {
   deleteUser,
   changeName,
   getAllUsers,
-  setRoleAdmin,
+  setRole,
 };

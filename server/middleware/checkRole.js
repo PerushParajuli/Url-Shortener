@@ -1,22 +1,19 @@
-const getUser = require("../services/auth");
+const { getUser } = require("../services/auth");
 
 const checkRole = (req, res, next) => {
   const token = req.cookies.uid;
 
   try {
     const decoded = getUser(token);
-    if (decoded) {
-      const role = decoded.role;
-      if (role !== "admin") {
-        return res
-          .status(403)
-          .json({ message: "Only admins are allowed to access functionality" });
-      }
-      req.role = role;
-      return next();
+    if (decoded.role === "admin") {
+      req.role = decoded.role;
+      next();
+    } else {
+      return res.status(403).json({ message: "Access Denied" });
     }
   } catch (error) {
-    return res.status(401).json({ message: "Role Extraction Failed" });
+    console.error(`Error extracting information from token: ${error.message}`);
+    res.status(500).json({ message: "Token extraction failed" });
   }
 };
 
