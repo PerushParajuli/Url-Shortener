@@ -1,12 +1,12 @@
 const jwt = require("jsonwebtoken");
 
 const setUser = (user) => {
-  const { email, role } = user;
+  const { email, role, active } = user;
   const userId = user._id;
   const secret = process.env.SECRET_KEY;
 
   try {
-    const userToken = jwt.sign({ userId, email, role }, secret, {
+    const userToken = jwt.sign({ userId, email, role, active }, secret, {
       expiresIn: "1h",
     });
     if (userToken) {

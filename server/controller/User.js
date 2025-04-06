@@ -19,6 +19,7 @@ const signUp = async (req, res) => {
     const response = await userModel.create({
       email: email,
       password: encryptedPassword,
+      active: true,
     });
 
     if (!response) {
@@ -126,6 +127,7 @@ const deleteUser = async (req, res) => {
   }
 };
 
+
 // Admin functionalities
 const getAllUsers = async (req, res) => {
   try {
@@ -143,12 +145,38 @@ const getAllUsers = async (req, res) => {
     console.error(`Problem fetching user data ${error}`);
     return res
       .status(500)
-      .json({ message: "Problem fetching user data by the admin" });
+      .json({ message: "Problem fetching users data by the admin" });
+  }
+};
+
+const getSpecificUser = async (req, res) => {
+  const userId = req.params.id;
+
+  try {
+    const response = await userModel.findById(userId).select("-password");
+    if (!response) {
+      return res.status(404).json({
+        success: false,
+        message: "User with the following Id doesnot exist",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "User information succesfully retrieved",
+      data: response,
+    });
+  } catch (error) {
+    console.error(`Error retrieving user based on the given ID: ${error}`);
+    return res.status(500).json({
+      success: false,
+      message: "Error retrieving user based on the given ID",
+    });
   }
 };
 
 const setRole = async (req, res) => {
-  const { userId, userRole } = req.body;
+  const userRole = req.body.userRole;
+  const userId = req.param.id;
 
   const availableRoles = ["user", "moderator", "sub admin"];
   const isFromAvailableRoles = availableRoles.includes(userRole);
@@ -183,12 +211,49 @@ const setRole = async (req, res) => {
   }
 };
 
+const deactivateAccount = async (req, res) => {
+  const userId = req.params.id;
+  try {
+    const response = await userModel.findByIdAndUpdate(userId, {
+      active: false,
+    });
+    if (response.active) {
+      return res
+        .status(200)
+        .json({ message: "Successfully reactivated the user." });
+    }
+  } catch (error) {
+    console.error("Error deactivating user:", error);
+    return res.status(500).json({ message: "Failed to deactivate user." });
+  }
+};
+
+const reactivateAccount = async (req, res) => {
+  const userId = req.params.id;
+  try {
+    const response = await userModel.findByIdAndUpdate(userId, {
+      active: true,
+    });
+    if (response.active) {
+      return res
+        .status(200)
+        .json({ message: "Successfully deactivated the user." });
+    }
+  } catch (error) {
+    console.error("Error reactivating user:", error);
+    return res.status(500).json({ message: "Failed to reactivate user." });
+  }
+};
+
 module.exports = {
   signUp,
   signIn,
   signOut,
   deleteUser,
   changeName,
+  getSpecificUser,
   getAllUsers,
   setRole,
+  deactivateAccount,
+  reactivateAccount,
 };

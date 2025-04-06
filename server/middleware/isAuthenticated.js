@@ -11,6 +11,7 @@ const isAuthenticated = (req, res, next) => {
     const decoded = getUser(token);
     if (decoded) {
       req.userId = decoded.userId;
+      req.active = decoded.active
       return next();
     }
   } catch (err) {

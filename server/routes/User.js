@@ -8,18 +8,40 @@ const {
   changeName,
   deleteUser,
   getAllUsers,
+  getSpecificUser,
   setRole,
+  deactivateAccount,
+  reactivateAccount,
 } = require("../controller/User");
 const checkRole = require("../middleware/checkRole");
+const isActive = require("../middleware/isActive");
 
+// User routes
 router.post("/auth/signup", signUp);
 router.post("/auth/signin", signIn);
-router.post("/signout", isAuthenticated, signOut);
-router.patch("/username", isAuthenticated, changeName);
-router.delete("/delete", isAuthenticated, deleteUser);
+router.post("/signout", isAuthenticated, isActive, signOut);
+router.patch("/username", isAuthenticated, isActive, changeName);
+router.delete("/delete", isAuthenticated, isActive, deleteUser);
 
 // Admin routes
 router.get("/admin/users", isAuthenticated, checkRole, getAllUsers);
-router.post("/admin/setRole", isAuthenticated, checkRole, setRole);
+
+router.get("/admin/users/:id", isAuthenticated, checkRole, getSpecificUser);
+
+router.post("/admin/setRole/:id", isAuthenticated, checkRole, setRole);
+
+router.post(
+  ".admin/deactivate/:id",
+  isAuthenticated,
+  checkRole,
+  deactivateAccount
+);
+
+router.post(
+  "/admin/deactivate/:id",
+  isAuthenticated,
+  checkRole,
+  reactivateAccount
+);
 
 module.exports = router;

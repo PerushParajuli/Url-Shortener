@@ -24,6 +24,10 @@ const userSchema = new Schema(
     profilePicture: {
       type: String,
     },
+    active: {
+      type: Boolean,
+      require: true,
+    },
   },
   { timestamps: true }
 );
