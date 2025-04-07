@@ -1,4 +1,4 @@
-const { getUser } = require("../services/auth");
+const { getUser } = require("../../services/auth");
 
 const checkRole = (req, res, next) => {
   const token = req.cookies.uid;

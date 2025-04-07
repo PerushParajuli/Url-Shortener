@@ -1,17 +1,11 @@
 const userModel = require("../model/User");
-const { setUser, getUser } = require("../services/auth");
+const { setUser } = require("../services/auth");
 const bcrypt = require("bcrypt");
 
 const signUp = async (req, res) => {
   const { email, password } = req.body;
 
   try {
-    // check if the email already exists
-    const verify = await userModel.findOne({ email: email });
-    if (verify) {
-      return res.status(403).json({ message: "User already Exists" });
-    }
-
     const saltRounds = 15;
     const salt = await bcrypt.genSalt(saltRounds);
     const encryptedPassword = await bcrypt.hash(password, salt);
@@ -21,10 +15,6 @@ const signUp = async (req, res) => {
       password: encryptedPassword,
       active: true,
     });
-
-    if (!response) {
-      return res.status(400).json({ message: "Invalid email" });
-    }
 
     return res
       .status(200)
@@ -126,7 +116,6 @@ const deleteUser = async (req, res) => {
     });
   }
 };
-
 
 // Admin functionalities
 const getAllUsers = async (req, res) => {
