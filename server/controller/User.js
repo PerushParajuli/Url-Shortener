@@ -103,10 +103,9 @@ const changeName = async (req, res) => {
 };
 
 const changePassword = async (req, res) => {
-  const uid = req.cookies.uid;
+  const userId = req.userId;
   const { currentPassword, newPassword } = req.body;
 
-  const userId = getUser(uid).userId;
   try {
     const user = await userModel.findById(userId);
 
@@ -118,16 +117,15 @@ const changePassword = async (req, res) => {
     const salt = await bcrypt.genSalt(saltRounds);
     const cryptedPassword = await bcrypt.hash(newPassword, salt);
 
-    // update the old password with new password
-    user.password = cryptedPassword;
-    await user.save()
-
-    return res
-      .status(200)
-      .json({
+    if (isMatch) {
+      // update the old password with new password
+      user.password = cryptedPassword;
+      await user.save();
+      return res.status(200).json({
         success: true,
         message: "Successfully changed the user password",
       });
+    }
   } catch (err) {
     console.error(`Error while changing password: ${err}`);
     return res.status(500).json({
@@ -281,6 +279,7 @@ module.exports = {
   signOut,
   deleteUser,
   changeName,
+  changePassword,
   getSpecificUser,
   getAllUsers,
   setRole,

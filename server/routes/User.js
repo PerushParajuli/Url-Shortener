@@ -6,6 +6,7 @@ const {
   signIn,
   signOut,
   changeName,
+  changePassword,
   deleteUser,
   getAllUsers,
   getSpecificUser,
@@ -41,6 +42,7 @@ router.post(
 router.post("/auth/signin", signIn);
 router.post("/signout", isAuthenticated, isActive, signOut);
 router.patch("/username", isAuthenticated, isActive, changeName);
+router.patch("/password", isAuthenticated, isActive, changePassword)
 router.delete("/delete", isAuthenticated, isActive, deleteUser);
 
 // Admin routes
