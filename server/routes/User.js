@@ -15,21 +15,18 @@ const {
 } = require("../controller/User");
 const checkRole = require("../middleware/admin/checkRole");
 const isActive = require("../middleware/isActive");
-const verificationTokenSenderMiddleware = require("../middleware/verificationTokenSender");
-const verificationTokenCheckerMiddleware = require("../middleware/verificationTokenCheker");
+const verificationTokenSenderMiddleware = require("../middleware/SignUp/verificationTokenSender");
+const verificationTokenCheckerMiddleware = require("../middleware/SignUp/verificationTokenCheker");
 
-// User routes
 // Endpoint to send verification Token
 router.post(
   "/auth/sendVerificationToken",
   verificationTokenSenderMiddleware,
   (req, res) => {
-    res
-      .status(200)
-      .json({
-        success: true,
-        message: "Verification token sent to User Email",
-      });
+    res.status(200).json({
+      success: true,
+      message: "Verification token sent to User Email",
+    });
   }
 );
 

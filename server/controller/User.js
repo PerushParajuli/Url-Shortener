@@ -3,17 +3,23 @@ const { setUser } = require("../services/auth");
 const bcrypt = require("bcrypt");
 
 const signUp = async (req, res) => {
-  const { email, password } = req.body;
+  const email = req.session.email;
+  const password = req.session.password;
 
   try {
-    const saltRounds = 15;
-    const salt = await bcrypt.genSalt(saltRounds);
-    const encryptedPassword = await bcrypt.hash(password, salt);
-
     const response = await userModel.create({
       email: email,
-      password: encryptedPassword,
+      password: password,
       active: true,
+    });
+
+    req.session.destroy((err) => {
+      if (err) {
+        console.error(`Error destroying session: ${err}`);
+        return res
+          .status(500)
+          .json({ success: false, message: "Error destroying session" });
+      }
     });
 
     return res

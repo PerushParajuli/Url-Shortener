@@ -1,13 +1,13 @@
 const express = require("express");
-const cookieParser = require("cookie-parser");
 const env = require("dotenv");
+env.config();
 
+const cookieParser = require("cookie-parser");
 const { connectDB } = require("./db/connect");
 const userRoutes = require("./routes/User");
 const urlRoutes = require("./routes/Url");
 const isAuthenticated = require("./middleware/isAuthenticated");
-
-env.config();
+const userSession = require("./middleware/Signup/userSession");
 
 const port = process.env.PORT;
 const connection_string = process.env.CONNECTION_STRING;
@@ -18,6 +18,9 @@ const app = express();
 app.use(express.urlencoded({ extended: true }));
 app.use(cookieParser());
 app.use(express.json());
+
+// Session Middleware
+app.use(userSession);
 
 // Custom middleware and processes
 app.use("/api/user", userRoutes);

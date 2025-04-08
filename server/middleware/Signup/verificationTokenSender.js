@@ -1,6 +1,7 @@
 const nodemailer = require("nodemailer");
-const EmailVerification = require("../model/EmailVerification");
-const userModel = require("../model/User");
+const EmailVerification = require("../../model/EmailVerification")
+const userModel = require("../../model/User");
+const bcrypt = require("bcrypt")
 const crypto = require("crypto");
 
 const transporter = nodemailer.createTransport({
@@ -28,7 +29,6 @@ const sendVerificationToken = async (email, token) => {
   }
 };
 
-// This middleware checks if the email and password are provided, verifies if the email already exists in the database, and sends a verification token if the email is new.
 
 const verificationTokenSenderMiddleware = async (req, res, next) => {
   const { email, password } = req.body;
@@ -36,9 +36,13 @@ const verificationTokenSenderMiddleware = async (req, res, next) => {
   if (!email || !password) {
     return res.status(403).json({ message: "Email and Password Required" });
   }
+
+  const saltRounds = 10
+  const salt = await bcrypt.genSalt(saltRounds)
+  const cryptedPassword = await bcrypt.hash(password, salt);
   
-  req.email = email;
-  req.password = password;
+  req.session.email = email;
+  req.session.password = cryptedPassword;
 
   // check if email already exist
   const verify = await userModel.findOne({ email: email });

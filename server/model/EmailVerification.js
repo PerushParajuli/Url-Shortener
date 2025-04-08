@@ -10,10 +10,15 @@ const emailVerificationTokenSchema = new Schema(
     verificationCode: {
       type: String,
       required: true,
-      expires: "5m",
     },
   },
   { timestamps: true }
+);
+
+// Add a TTL index to the createdAt field
+emailVerificationTokenSchema.index(
+  { createdAt: 1 },
+  { expireAfterSeconds: 200 }
 );
 
 const EmailVerification = mongoose.model(
