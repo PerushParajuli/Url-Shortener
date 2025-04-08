@@ -1,5 +1,5 @@
 const userModel = require("../model/User");
-const { setUser } = require("../services/auth");
+const { setUser, getUser } = require("../services/auth");
 const bcrypt = require("bcrypt");
 
 const signUp = async (req, res) => {
@@ -99,6 +99,41 @@ const changeName = async (req, res) => {
   } catch (error) {
     console.error(`Problem changing the username: ${error}`);
     return res.status(500).json({ message: "Error changing the username" });
+  }
+};
+
+const changePassword = async (req, res) => {
+  const uid = req.cookies.uid;
+  const { currentPassword, newPassword } = req.body;
+
+  const userId = getUser(uid).userId;
+  try {
+    const user = await userModel.findById(userId);
+
+    // Verify password is a match
+    const isMatch = await bcrypt.compare(currentPassword, user.password);
+
+    // hashing the new password
+    const saltRounds = 10;
+    const salt = await bcrypt.genSalt(saltRounds);
+    const cryptedPassword = await bcrypt.hash(newPassword, salt);
+
+    // update the old password with new password
+    user.password = cryptedPassword;
+    await user.save()
+
+    return res
+      .status(200)
+      .json({
+        success: true,
+        message: "Successfully changed the user password",
+      });
+  } catch (err) {
+    console.error(`Error while changing password: ${err}`);
+    return res.status(500).json({
+      success: false,
+      message: "Error while changing the user password",
+    });
   }
 };
 

@@ -1,7 +1,7 @@
 const nodemailer = require("nodemailer");
-const EmailVerification = require("../../model/EmailVerification")
+const EmailVerification = require("../../model/EmailVerification");
 const userModel = require("../../model/User");
-const bcrypt = require("bcrypt")
+const bcrypt = require("bcrypt");
 const crypto = require("crypto");
 
 const transporter = nodemailer.createTransport({
@@ -15,11 +15,20 @@ const transporter = nodemailer.createTransport({
 const sendVerificationToken = async (email, token) => {
   try {
     const response = await transporter.sendMail({
-      from: process.env.SMTP_USER,
+      from: `"URL Shortener Team" <${process.env.SMTP_USER}>`,
       to: email,
-      subject: "Email Verification Token for URL shortener",
-      html: `<h1>Your Verification Token is ${token}</h1>`,
-      text: `Token: ${token}`,
+      subject: "Verify your email for URL Shortener",
+      html: `
+        <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
+          <h2>Email Verification</h2>
+          <p>Hello,</p>
+          <p>Here is your verification token:</p>
+          <p style="font-size: 1.5em; font-weight: bold; color: #2a7ae2;">${token}</p>
+          <p>If you did not request this, please ignore this message.</p>
+          <p>Thanks,<br>The URL Shortener Team</p>
+        </div>
+      `,
+      text: `Your verification token is: ${token}\n\nIf you did not request this, you can ignore this message.\n\nThanks,\nThe URL Shortener Team`,
     });
 
     return response.accepted.length > 0;
@@ -29,7 +38,6 @@ const sendVerificationToken = async (email, token) => {
   }
 };
 
-
 const verificationTokenSenderMiddleware = async (req, res, next) => {
   const { email, password } = req.body;
 
@@ -37,10 +45,10 @@ const verificationTokenSenderMiddleware = async (req, res, next) => {
     return res.status(403).json({ message: "Email and Password Required" });
   }
 
-  const saltRounds = 10
-  const salt = await bcrypt.genSalt(saltRounds)
+  const saltRounds = 10;
+  const salt = await bcrypt.genSalt(saltRounds);
   const cryptedPassword = await bcrypt.hash(password, salt);
-  
+
   req.session.email = email;
   req.session.password = cryptedPassword;
 
