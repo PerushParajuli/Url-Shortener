@@ -37,4 +37,4 @@ const urlSchema = new Schema(
 
 const urlModel = mongoose.model("url", urlSchema);
 
-module.exports = urlModel
+module.exports = urlModel;

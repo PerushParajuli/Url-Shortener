@@ -1,9 +1,8 @@
-const urlModel = require("../model/Url");
 const express = require("express");
+const { addOriginalUrl, getShortenedUrl } = require("../controller/Url");
 const router = express.Router();
 
-router.post("/", (req, res) => {
-  res.json({ message: "Tried creating Url" });
-});
+router.post("/convert", addOriginalUrl);
+router.get("/shortend", getShortenedUrl);
 
 module.exports = router;
