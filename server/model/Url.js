@@ -4,7 +4,7 @@ const Schema = mongoose.Schema;
 const urlSchema = new Schema(
   {
     title: {
-      type: String, // Title for the given Original Url
+      type: String, 
     },
     originalUrl: {
       type: String,
@@ -14,7 +14,6 @@ const urlSchema = new Schema(
     shortenedUrl: {
       type: String,
       required: true,
-      unique: true,
     },
     domainName: {
       type: String,

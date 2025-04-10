@@ -24,7 +24,7 @@ app.use(userSession);
 
 // Custom middleware and processes
 app.use("/api/user", userRoutes);
-app.use("/api/url", isAuthenticated, urlRoutes);
+app.use("/api/urls", isAuthenticated, urlRoutes);
 
 // Connect to database
 connectDB(connection_string);

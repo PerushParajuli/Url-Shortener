@@ -1,8 +1,16 @@
 const express = require("express");
-const { addOriginalUrl, getShortenedUrl } = require("../controller/Url");
+const {
+  addOriginalUrl,
+  getShortenedUrl,
+  updateUrlDetails,
+  deleteUrl,
+} = require("../controller/Url");
 const router = express.Router();
 
-router.post("/convert", addOriginalUrl);
-router.get("/shortend", getShortenedUrl);
+router.post("/add", addOriginalUrl);
+router.get("/get", getShortenedUrl);
+router.patch("/:id", updateUrlDetails);
+router.delete("/:id", deleteUrl); 
+// router.delete("/", deleteAllUrls)
 
 module.exports = router;
