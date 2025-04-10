@@ -2,6 +2,7 @@ const urlModel = require("../model/Url");
 const { nanoid } = require("nanoid");
 const validUrl = require("valid-url");
 const { URL } = require("url");
+const { default: mongoose } = require("mongoose");
 
 const addOriginalUrl = async (req, res) => {
   const originalUrl = req.body.originalUrl;
@@ -76,7 +77,7 @@ const getShortenedUrl = async (req, res) => {
   const userId = req.userId;
 
   try {
-    const urls = await urlModel.findById({ userId });
+    const urls = await urlModel.find({ userId });
     if (!urls) {
       return res.status(404).json({
         success: false,
@@ -89,6 +90,7 @@ const getShortenedUrl = async (req, res) => {
     return res.status(500).json({
       success: false,
       message: "Error retrieving URLs",
+      error: error,
     });
   }
 };
@@ -131,20 +133,51 @@ const deleteUrl = async (req, res) => {
   const urlId = req.params.id;
 
   try {
+    if (!mongoose.Types.ObjectId.isValid(urlId)) {
+      return res
+        .status(400)
+        .json({ success: false, message: "Invalid Url Id" });
+    }
     const response = await urlModel.findByIdAndDelete(urlId);
     if (!response) {
       return res
-        .status(500)
+        .status(404)
         .json({ success: false, message: "Problem deleting the url" });
     }
     return res
       .status(200)
       .json({ success: true, message: "Successfully deleted the url" });
   } catch (error) {
-    console.error(`Problem deleting the url: ${error}`);
+    console.error(`Problem deleting this url: ${error}`);
     return res
       .status(500)
-      .json({ success: false, message: "Problem deleting the url" });
+      .json({ success: false, message: "Problem deleting this specific url" });
+  }
+};
+
+const deleteAllUrls = async (req, res) => {
+  const userId = req.userId;
+
+  try {
+    const response = await urlModel.deleteMany({
+      userId: userId,
+    });
+
+    if (!response) {
+      return res.status(404).json({
+        success: false,
+        message: "No URL exist that is related to this user",
+      });
+    }
+    return res.status(200).json({
+      success: true,
+      message: "All URL related to user has been successfully deleted.",
+    });
+  } catch (error) {
+    return res.status(500).json({
+      success: false,
+      message: `Could not delete Url data related to user: ${error}`,
+    });
   }
 };
 
@@ -153,4 +186,5 @@ module.exports = {
   getShortenedUrl,
   updateUrlDetails,
   deleteUrl,
+  deleteAllUrls,
 };
