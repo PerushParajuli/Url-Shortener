@@ -1,7 +1,12 @@
 import React from "react";
+import SignUp from "./assets/pages/SignUp";
 
 const App = () => {
-  return <div className=" text-9xl font-extrabold">App</div>;
+  return (
+    <div>
+      <SignUp />
+    </div>
+  );
 };
 
 export default App;
