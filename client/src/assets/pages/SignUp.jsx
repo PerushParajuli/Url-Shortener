@@ -8,6 +8,7 @@ const SignUp = () => {
   const [password, setPassword] = useState("");
   const [showPassword, setShowPassword] = useState(false);
   const [passwordMessage, setPasswordMessage] = useState("");
+  const [emailMessage, setEmailMessage] = useState("");
   const [allowSubmission, setAllowSubmission] = useState(false);
 
   const handleSubmit = (e) => {
@@ -15,9 +16,15 @@ const SignUp = () => {
 
     if (allowSubmission) {
     } else {
-      setPasswordMessage(
-        "Password should contain at least one uppercase letter, one lowercase letter, one number, one symbol, and be at least 8 characters long."
-      );
+      if (email === "") {
+        setEmailMessage("Email needed");
+      } else if (password === "") {
+        setPasswordMessage("Password needed");
+      } else {
+        setPasswordMessage(
+          "Password should contain at least one uppercase letter, one lowercase letter, one number, one symbol, and be at least 8 characters long."
+        );
+      }
     }
   };
 
@@ -33,33 +40,41 @@ const SignUp = () => {
     } else if (passwordRegExp.test(password) && emailRegExp.test(email)) {
       setAllowSubmission(true);
       setPasswordMessage("");
+      setEmailMessage("");
     }
   }, [password, email]);
 
   return (
-    <div className="signupContainer min-h-screen grid grid-col-1 md:grid-cols-2 place-items-center">
-      <div className="w-[450px] flex flex-col gap-y-5 text-color-auth">
-        <div>
-          <h2 className="font-extrabold">Create your account</h2>
-          <p className="mt-2">Already have an account? Log in</p>
+    <div className="signupContainer min-h-screen px-4 grid grid-col-1 md:grid-cols-2 place-items-center">
+      <div className="max-w-[450px] flex flex-col gap-y-5 text-color-auth">
+        <div className="order-1">
+          <h2 className="font-extrabold text-4xl sm:text-3xl">
+            Create your account
+          </h2>
+          <p className="mt-2 text-lg sm:text-base">
+            Already have an account? Log in
+          </p>
         </div>
 
-        <button className="w-full flex items-center gap-x-2 py-2 justify-center border border-slate-300 rounded-sm hover:bg-slate-100 cursor-pointer">
-          <FcGoogle className="text-xl" /> Continue with Google
-        </button>
+        <div className="flex flex-col gap-y-4 order-3 sm:order-2">
+          <button className="order-2 sm:order-1 w-full flex items-center gap-x-2 py-3 sm:py-2 justify-center border border-slate-300 rounded-sm hover:bg-slate-100 cursor-pointer">
+            <FcGoogle className="text-xl" /> Continue with Google
+          </button>
 
-        <div className="flex items-center gap-x-4">
-          <div className="flex-grow bg-slate-300 h-[1px]"></div>
-          <span className="uppercase text-slate-600 font-semibold">OR</span>
-          <div className="flex-grow bg-slate-300 h-[1px]"></div>
+          <div className="order-1 sm:order-2 flex items-center gap-x-4">
+            <div className="flex-grow bg-slate-300 h-[1px]"></div>
+            <span className="uppercase text-slate-600 font-semibold">OR</span>
+            <div className="flex-grow bg-slate-300 h-[1px]"></div>
+          </div>
         </div>
 
         <form
           action=""
           method="post"
-          className="flex flex-col gap-y-5 text-color-auth"
+          className="flex flex-col gap-y-5 text-color-auth order-2 sm:order-3"
           onSubmit={handleSubmit}
         >
+          {/* Email */}
           <div className="flex flex-col gap-y-1">
             <label htmlFor="email" className="font-semibold ">
               Email
@@ -71,9 +86,11 @@ const SignUp = () => {
               className="py-2 px-4 border border-slate-300 rounded-sm outline-blue-500"
               onChange={(e) => setEmail(e.target.value)}
             />
+            <span className="text-sm text-red-600">{emailMessage}</span>
           </div>
 
-          <div className="flex flex-col gap-y-1">
+          {/* Password */}
+          <div className="flex flex-col gap-y-1 order-4">
             <label htmlFor="password" className="font-semibold ">
               Password
             </label>
@@ -108,17 +125,18 @@ const SignUp = () => {
             <span className="text-sm text-red-600">{passwordMessage}</span>
           </div>
 
+          {/* Submit button */}
           <button
             type={"submit"}
             className={`w-full ${
               allowSubmission ? "bg-[#2a36d9]" : "bg-[#2A5BD7]"
-            } text-white py-2 font-semibold cursor-pointer rounded-sm`}
+            } py-3 sm:py-2 text-white font-semibold cursor-pointer rounded-sm order-5`}
           >
             Create free account
           </button>
         </form>
 
-        <span>
+        <span className="order-6">
           By creating an account, you agree to /___/ Terms of Service, Privacy
           Policy and Acceptable Use Policy.
         </span>
@@ -135,3 +153,7 @@ const SignUp = () => {
 };
 
 export default SignUp;
+
+// Backend Integration
+// Implement actual authentication logic for google
+// Password Strength Indicator
