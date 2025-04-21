@@ -1,48 +1,82 @@
 import { AiOutlineEyeInvisible } from "react-icons/ai";
 import { AiOutlineEye } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
-import { useState, useEffect } from "react";
+import { useState, useEffect, useReducer } from "react";
+
+// Action Types
+const SET_EMAIL = "SET_EMAIL";
+const SET_PASSWORD = "SET_PASSWORD";
+const SET_SHOW_PASSWORD = "SET_SHOW_PASSWORD";
+const SET_PASSWORD_MESSAGE = "SET_PASSWORD_MESSAGE";
+const SET_EMAIL_MESSAGE = "SET_EMAIL_MESSAGE";
+const SET_ALLOW_SUBMISSION = "SET_ALLOW_SUBMISSION";
+
+const initialState = {
+  email: "",
+  password: "",
+  showPassword: false,
+  passwordMessage: "",
+  emailMessage: "",
+  allowSubmission: false,
+};
+
+const reducer = (state, action) => {
+  switch (action.type) {
+    case SET_EMAIL:
+      return { ...state, email: action.payload };
+    case SET_PASSWORD:
+      return { ...state, password: action.payload };
+    case SET_SHOW_PASSWORD:
+      return { ...state, showPassword: action.payload };
+    case SET_PASSWORD_MESSAGE:
+      return { ...state, passwordMessage: action.payload };
+    case SET_EMAIL_MESSAGE:
+      return { ...state, emailMessage: action.payload };
+    case SET_ALLOW_SUBMISSION:
+      return { ...state, allowSubmission: action.payload };
+  }
+};
 
 const SignIn = () => {
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [showPassword, setShowPassword] = useState(false);
-  const [passwordMessage, setPasswordMessage] = useState("");
-  const [emailMessage, setEmailMessage] = useState("");
-  const [allowSubmission, setAllowSubmission] = useState(false);
+  const [state, dispatch] = useReducer(reducer, initialState);
 
   const handleSubmit = (e) => {
     e.preventDefault();
 
-    if (allowSubmission) {
+    if (state.allowSubmission) {
     } else {
-      if (email === "") {
-        setEmailMessage("Email needed");
-      } else if (password === "") {
-        setPasswordMessage("Password needed");
+      if (state.email === "") {
+        dispatch({ type: SET_EMAIL_MESSAGE, payload: "Email needed!" });
+      } else if (state.password === "") {
+        dispatch({ type: SET_PASSWORD_MESSAGE, payload: "Password needed!" });
       } else {
-        setPasswordMessage(
-          "Password should contain at least one uppercase letter, one lowercase letter, one number, one symbol, and be at least 8 characters long."
-        );
+        dispatch({
+          type: SET_PASSWORD_MESSAGE,
+          payload:
+            "Password should contain at least one uppercase letter, one lowercase letter, one number, one symbol, and be at least 8 characters long.",
+        });
       }
     }
   };
 
   const toggleShowPassword = () => {
-    setShowPassword(!showPassword);
+    dispatch({ type: SET_SHOW_PASSWORD, payload: !state.showPassword });
   };
 
   useEffect(() => {
     const emailRegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordRegExp = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
-    if (password === "" || email === "") {
-      setAllowSubmission(false);
-    } else if (passwordRegExp.test(password) && emailRegExp.test(email)) {
-      setAllowSubmission(true);
-      setPasswordMessage("");
-      setEmailMessage("");
+    if (state.password === "" || state.email === "") {
+      dispatch({ type: SET_ALLOW_SUBMISSION, payload: false });
+    } else if (
+      passwordRegExp.test(state.password) &&
+      emailRegExp.test(state.email)
+    ) {
+      dispatch({ type: SET_ALLOW_SUBMISSION, payload: true });
+      dispatch({ type: SET_PASSWORD_MESSAGE, payload: "" });
+      dispatch({ type: SET_EMAIL_MESSAGE, payload: "" });
     }
-  }, [password, email]);
+  }, [state.password, state.email]);
 
   return (
     <div className="signupContainer min-h-screen px-4 grid grid-col-1 md:grid-cols-2 place-items-center">
@@ -84,9 +118,11 @@ const SignIn = () => {
               name="email"
               id="email"
               className="py-2 px-4 border border-slate-300 rounded-sm outline-blue-500"
-              onChange={(e) => setEmail(e.target.value)}
+              onChange={(e) =>
+                dispatch({ type: SET_EMAIL, payload: e.target.value })
+              }
             />
-            <span className="text-sm text-red-600">{emailMessage}</span>
+            <span className="text-sm text-red-600">{state.emailMessage}</span>
           </div>
 
           {/* Password */}
@@ -96,15 +132,17 @@ const SignIn = () => {
             </label>
             <div className="relative">
               <input
-                type={showPassword ? "text" : "password"}
+                type={state.showPassword ? "text" : "password"}
                 name="password"
                 id="password"
                 className={`w-full py-2 px-4 border border-slate-300 rounded-sm outline-blue-500`}
-                onChange={(e) => setPassword(e.target.value)}
+                onChange={(e) =>
+                  dispatch({ type: SET_PASSWORD, payload: e.target.value })
+                }
               />
 
-              {password &&
-                (showPassword ? (
+              {state.password &&
+                (state.showPassword ? (
                   <button
                     className="absolute top-3 right-3"
                     onClick={toggleShowPassword}
@@ -122,16 +160,19 @@ const SignIn = () => {
                   </button>
                 ))}
             </div>
-            <span className="text-sm text-red-600">{passwordMessage}</span>
-            <span className="my-3 ml-auto underline text-blue-600 hover:text-blue-700 cursor-pointer">Forget your password?</span>
+            <span className="text-sm text-red-600">
+              {state.passwordMessage}
+            </span>
+            <span className="my-3 ml-auto underline text-blue-600 hover:text-blue-700 cursor-pointer">
+              Forget your password?
+            </span>
           </div>
-
 
           {/* Submit button */}
           <button
             type={"submit"}
             className={`w-full ${
-              allowSubmission ? "bg-[#2a36d9]" : "bg-[#2A5BD7]"
+              state.allowSubmission ? "bg-[#2a36d9]" : "bg-[#2A5BD7]"
             } py-3 sm:py-2 text-white font-semibold cursor-pointer rounded-sm order-5`}
           >
             Login
