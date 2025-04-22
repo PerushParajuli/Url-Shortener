@@ -2,8 +2,34 @@ import { HiOutlineDotsCircleHorizontal } from "react-icons/hi";
 import React from "react";
 
 const SignUpConfirmation = () => {
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
+    const inputs = document.querySelectorAll("#otp-inputs input");
+
+    const otpCode = Array.from(inputs)
+      .map((input) => input.value)
+      .join("");
+
+    const apiEndPoint =
+      "http://localhost:3002/api/user/auth/verifyTokenAndSignup";
+
+    try {
+      const res = fetch(apiEndPoint, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({ verificationToken: otpCode }),
+        credentials: "include",
+      });
+
+      if (!res.ok) {
+        throw new Error(`Response status: ${res.status}`);
+      }
+      console.log("User successfully created");
+    } catch (error) {
+      throw new Error(`Error validating and creating user`);
+    }
   };
 
   return (
@@ -22,15 +48,40 @@ const SignUpConfirmation = () => {
 
         <form
           onSubmit={handleSubmit}
-          className="flex flex-col items-center gap-y-2"
+          className="flex flex-col items-center gap-y-5"
         >
-          <input
-            type="text"
-            name="verificationToken"
-            id="verificationToken"
-            placeholder="Enter your code"
-            className="outline-none border-2 border-blue-300 rounded-md p-2 w-full transition duration-300 focus:border-blue-400"
-          />
+          <div id="otp-inputs" className="flex gap-x-2">
+            <input
+              maxlength="1"
+              name="input"
+              className="w-8 p-1 text-lg text-center border-2 outline-0"
+            />
+            <input
+              maxlength="1"
+              name="input"
+              className="w-8 p-1 text-lg text-center border-2 outline-0"
+            />
+            <input
+              maxlength="1"
+              name="input"
+              className="w-8 p-1 text-lg text-center border-2 outline-0"
+            />
+            <input
+              maxlength="1"
+              name="input"
+              className="w-8 p-1 text-lg text-center border-2 outline-0"
+            />
+            <input
+              maxlength="1"
+              name="input"
+              className="w-8 p-1 text-lg text-center border-2 outline-0"
+            />
+            <input
+              maxlength="1"
+              name="input"
+              className="w-8 p-1 text-lg text-center border-2 outline-0"
+            />
+          </div>
           <button
             type="submit"
             className="bg-blue-600 hover:bg-blue-700 text-white cursor-pointer w-full px-8 py-2 rounded-md shadow-md transition duration-200"

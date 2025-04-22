@@ -39,10 +39,34 @@ const reducer = (state, action) => {
 const SignUp = () => {
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (state.allowSubmission) {
+      const email = state.email;
+      const password = state.password;
+      const apiEndPoint =
+        "http://localhost:3002/api/user/auth/sendVerificationToken";
+
+      try {
+        const res = await fetch(apiEndPoint, {
+          method: "POST",
+          body: JSON.stringify({ email, password }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          credentials: "include",
+        });
+
+        if (!res.ok) {
+          throw new Error(`Response status: ${res.status}`);
+        }
+
+        const parsed = await res.json();
+        console.log(parsed);
+      } catch (error) {
+        console.error("Error submitting form:", error);
+      }
     } else {
       if (state.email === "") {
         dispatch({ type: SET_EMAIL_MESSAGE, payload: "Email needed!" });
@@ -59,7 +83,7 @@ const SignUp = () => {
   };
 
   const toggleShowPassword = () => {
-    dispatch({ type: SET_PASSWORD, payload: !state.showPassword });
+    dispatch({ type: SET_SHOW_PASSWORD, payload: !state.showPassword });
   };
 
   useEffect(() => {
@@ -102,7 +126,6 @@ const SignUp = () => {
         </div>
 
         <form
-          action=""
           method="post"
           className="flex flex-col gap-y-5 text-color-auth order-2 sm:order-3"
           onSubmit={handleSubmit}
@@ -193,6 +216,5 @@ const SignUp = () => {
 
 export default SignUp;
 
-// Backend Integration
 // Implement actual authentication logic for google
 // Password Strength Indicator
