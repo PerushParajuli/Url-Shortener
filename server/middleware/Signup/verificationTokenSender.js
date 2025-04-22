@@ -17,18 +17,18 @@ const sendVerificationToken = async (email, token) => {
     const response = await transporter.sendMail({
       from: `"URL Shortener Team" <${process.env.SMTP_USER}>`,
       to: email,
-      subject: "Verify your email for URL Shortener",
+      subject: "OTP code for Signing up to URL Shortener",
       html: `
         <div style="font-family: Arial, sans-serif; line-height: 1.5; color: #333;">
           <h2>Email Verification</h2>
           <p>Hello,</p>
-          <p>Here is your verification token:</p>
+          <p>Your One Time Password Code is:</p>
           <p style="font-size: 1.5em; font-weight: bold; color: #2a7ae2;">${token}</p>
           <p>If you did not request this, please ignore this message.</p>
           <p>Thanks,<br>The URL Shortener Team</p>
         </div>
       `,
-      text: `Your verification token is: ${token}\n\nIf you did not request this, you can ignore this message.\n\nThanks,\nThe URL Shortener Team`,
+      text: `Your verification token is: ${token}\n\n This code is valid for 3 minutes. If you did not request this, you can ignore this message.\n\nThanks,\nThe URL Shortener Team`,
     });
 
     return response.accepted.length > 0;
@@ -61,7 +61,7 @@ const verificationTokenSenderMiddleware = async (req, res, next) => {
     });
   }
 
-  const verificationToken = crypto.randomInt(33333, 99999).toString();
+  const verificationToken = crypto.randomInt(333333, 999999).toString();
 
   try {
     //   Store verification token and email in a database
