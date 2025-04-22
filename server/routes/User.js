@@ -16,7 +16,7 @@ const {
 } = require("../controller/User");
 const checkRole = require("../middleware/admin/checkRole");
 const isActive = require("../middleware/isActive");
-const verificationTokenSenderMiddleware = require("../middleware/SignUp/verificationTokenSender");
+const verificationTokenSenderMiddleware = require("../middleware/Signup/verificationTokenSender");
 const verificationTokenCheckerMiddleware = require("../middleware/SignUp/verificationTokenCheker");
 
 // Endpoint to send verification Token
@@ -60,7 +60,7 @@ router.post(
 );
 
 router.post(
-  "/admin/deactivate/:id",
+  "/admin/reactivate/:id",
   isAuthenticated,
   checkRole,
   reactivateAccount
