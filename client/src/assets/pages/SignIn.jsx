@@ -1,7 +1,9 @@
 import { AiOutlineEyeInvisible } from "react-icons/ai";
 import { AiOutlineEye } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
-import { useState, useEffect, useReducer } from "react";
+import { useEffect, useReducer } from "react";
+import { NavLink, useNavigate } from "react-router-dom";
+
 
 // Action Types
 const SET_EMAIL = "SET_EMAIL";
@@ -38,12 +40,45 @@ const reducer = (state, action) => {
 };
 
 const SignIn = () => {
+  const navigate = useNavigate()
   const [state, dispatch] = useReducer(reducer, initialState);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
 
     if (state.allowSubmission) {
+      const apiEndPoint = "http://localhost:3002/api/user/auth/signin";
+      const email = state.email;
+      const password = state.password;
+      try {
+        const res = await fetch(apiEndPoint, {
+          body: JSON.stringify({ email, password }),
+          headers: {
+            "Content-Type": "application/json",
+          },
+          method: "POST",
+          credentials: "include",
+        });
+
+        if (!res.ok) {
+          switch (res.status) {
+            case 404:
+              console.log("User doesnot exist, Signup Please!");
+              navigate("/signup")
+              return;
+            case 403:
+              console.log("Password incorrect, please enter a valid password!");
+              return;
+            case 500:
+              console.log("Internal Server Error");
+              return;
+          }
+          throw new Error(`Error logging the user!`);
+        }
+        redirect("/home")
+      } catch (error) {
+        console.error(`Problem logging the user: ${error}`);
+      }
     } else {
       if (state.email === "") {
         dispatch({ type: SET_EMAIL_MESSAGE, payload: "Email needed!" });
@@ -63,6 +98,7 @@ const SignIn = () => {
     dispatch({ type: SET_SHOW_PASSWORD, payload: !state.showPassword });
   };
 
+  // Handles password and email validation
   useEffect(() => {
     const emailRegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordRegExp = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
@@ -85,8 +121,8 @@ const SignIn = () => {
           <h2 className="font-extrabold text-4xl sm:text-3xl">
             Log in and start sharing
           </h2>
-          <p className="mt-2 text-lg sm:text-base">
-            Don't have an account? Sign up
+          <p className="mt-2 text-lg sm:text-base cursor-pointer">
+            Don't have an account? <NavLink to="/signup"> Sign up</NavLink>
           </p>
         </div>
 
@@ -103,7 +139,6 @@ const SignIn = () => {
         </div>
 
         <form
-          action=""
           method="post"
           className="flex flex-col gap-y-5 text-color-auth order-2 sm:order-3"
           onSubmit={handleSubmit}

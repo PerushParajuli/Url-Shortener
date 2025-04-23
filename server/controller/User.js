@@ -36,6 +36,7 @@ const signIn = async (req, res) => {
   try {
     // Verify is the account exists
     const account = await userModel.findOne({ email: email });
+    
     if (!account) {
       return res
         .status(404)
@@ -68,7 +69,7 @@ const signIn = async (req, res) => {
 const signOut = async (req, res) => {
   try {
     // Clear the cookie by setting its expiration date to past
-
+    
     res.clearCookie("uid", { httpOnly: true });
     return res.status(200).json({ message: "Successfully logged out" });
   } catch (error) {

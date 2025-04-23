@@ -1,7 +1,9 @@
 import { HiOutlineDotsCircleHorizontal } from "react-icons/hi";
 import React from "react";
+import {useNavigate} from "react-router-dom"
 
 const SignUpConfirmation = () => {
+  const navigate = useNavigate()
   const handleSubmit = async (e) => {
     e.preventDefault();
     const inputs = document.querySelectorAll("#otp-inputs input");
@@ -27,8 +29,9 @@ const SignUpConfirmation = () => {
         throw new Error(`Response status: ${res.status}`);
       }
       console.log("User successfully created");
+      navigate("/home");
     } catch (error) {
-      throw new Error(`Error validating and creating user`);
+      throw new Error(`Error creating user`);
     }
   };
 

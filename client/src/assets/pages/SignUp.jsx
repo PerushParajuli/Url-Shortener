@@ -2,6 +2,7 @@ import { AiOutlineEyeInvisible } from "react-icons/ai";
 import { AiOutlineEye } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { useEffect, useReducer } from "react";
+import {NavLink, useNavigate} from "react-router-dom"
 
 const SET_EMAIL = "SET_EMAIL";
 const SET_PASSWORD = "SET_PASSWORD";
@@ -37,6 +38,7 @@ const reducer = (state, action) => {
 };
 
 const SignUp = () => {
+  const navigate = useNavigate();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const handleSubmit = async (e) => {
@@ -64,6 +66,7 @@ const SignUp = () => {
 
         const parsed = await res.json();
         console.log(parsed);
+        navigate("/signup/confirmation")
       } catch (error) {
         console.error("Error submitting form:", error);
       }
@@ -109,7 +112,7 @@ const SignUp = () => {
             Create your account
           </h2>
           <p className="mt-2 text-lg sm:text-base">
-            Already have an account? Log in
+            Already have an account? <NavLink to="/signin">Log in</NavLink>
           </p>
         </div>
 
