@@ -55,7 +55,7 @@ const verificationTokenSenderMiddleware = async (req, res, next) => {
   // check if email already exist
   const verify = await userModel.findOne({ email: email });
   if (verify) {
-    return res.status(403).json({
+    return res.status(409).json({
       message:
         "User with the same email already exist. Try using another email",
     });

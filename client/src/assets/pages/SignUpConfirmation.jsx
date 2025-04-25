@@ -1,9 +1,23 @@
+
 import { HiOutlineDotsCircleHorizontal } from "react-icons/hi";
 import React from "react";
-import {useNavigate} from "react-router-dom"
+import { useNavigate } from "react-router-dom";
 
 const SignUpConfirmation = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
+
+  const handlePaste = (e) => {
+    e.preventDefault();
+    const pasteData = e.clipboardData.getData("text");
+    const inputs = document.querySelectorAll("#otp-inputs input");
+
+    pasteData.split("").forEach((char, index) => {
+      if (inputs[index]) {
+        inputs[index].value = char;
+      }
+    });
+  };
+
   const handleSubmit = async (e) => {
     e.preventDefault();
     const inputs = document.querySelectorAll("#otp-inputs input");
@@ -55,32 +69,33 @@ const SignUpConfirmation = () => {
         >
           <div id="otp-inputs" className="flex gap-x-2">
             <input
-              maxlength="1"
+              maxLength="1"
+              name="input"
+              className="w-8 p-1 text-lg text-center border-2 outline-0"
+              onPaste={handlePaste}
+            />
+            <input
+              maxLength="1"
               name="input"
               className="w-8 p-1 text-lg text-center border-2 outline-0"
             />
             <input
-              maxlength="1"
+              maxLength="1"
               name="input"
               className="w-8 p-1 text-lg text-center border-2 outline-0"
             />
             <input
-              maxlength="1"
+              maxLength="1"
               name="input"
               className="w-8 p-1 text-lg text-center border-2 outline-0"
             />
             <input
-              maxlength="1"
+              maxLength="1"
               name="input"
               className="w-8 p-1 text-lg text-center border-2 outline-0"
             />
             <input
-              maxlength="1"
-              name="input"
-              className="w-8 p-1 text-lg text-center border-2 outline-0"
-            />
-            <input
-              maxlength="1"
+              maxLength="1"
               name="input"
               className="w-8 p-1 text-lg text-center border-2 outline-0"
             />

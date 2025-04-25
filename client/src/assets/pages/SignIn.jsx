@@ -3,7 +3,7 @@ import { AiOutlineEye } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
 import { useEffect, useReducer } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
-
+import { ToastContainer, toast } from "react-toastify";
 
 // Action Types
 const SET_EMAIL = "SET_EMAIL";
@@ -40,7 +40,7 @@ const reducer = (state, action) => {
 };
 
 const SignIn = () => {
-  const navigate = useNavigate()
+  const navigate = useNavigate();
   const [state, dispatch] = useReducer(reducer, initialState);
 
   const handleSubmit = async (e) => {
@@ -63,11 +63,10 @@ const SignIn = () => {
         if (!res.ok) {
           switch (res.status) {
             case 404:
-              console.log("User doesnot exist, Signup Please!");
-              navigate("/signup")
+              toast.error("User doesnot exist, Signup Please!");
               return;
             case 403:
-              console.log("Password incorrect, please enter a valid password!");
+              toast.warning("Password incorrect, please enter a valid password!");
               return;
             case 500:
               console.log("Internal Server Error");
@@ -75,7 +74,7 @@ const SignIn = () => {
           }
           throw new Error(`Error logging the user!`);
         }
-        redirect("/home")
+        redirect("/home");
       } catch (error) {
         console.error(`Problem logging the user: ${error}`);
       }
@@ -226,6 +225,7 @@ const SignIn = () => {
           className="h-full w-full object-cover"
         />
       </div>
+      <ToastContainer position="top-right" />
     </div>
   );
 };
