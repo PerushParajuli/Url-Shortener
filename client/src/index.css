@@ -1,34 +1,100 @@
 @import "tailwindcss";
 
 @layer base {
-    h1 {
-        font-size: 2.25rem; /* Equivalent to text-4xl in Tailwind */
-        line-height: 2.5rem;
-    }
-    h2 {
-        font-size: 1.875rem; /* Equivalent to text-3xl in Tailwind */
-        line-height: 2.25rem;
-    }
-    h3 {
-        font-size: 1.5rem; /* Equivalent to text-2xl in Tailwind */
-        line-height: 2rem;
-    }
-    h4 {
-        font-size: 1.25rem; /* Equivalent to text-xl in Tailwind */
-        line-height: 1.75rem;
-    }
-    h5 {
-        font-size: 1.125rem; /* Equivalent to text-lg in Tailwind */
-        line-height: 1.5rem;
-    }
-    h6 {
-        font-size: 1rem; /* Equivalent to text-base in Tailwind */
-        line-height: 1.5rem;
-    }
+  h1 {
+    font-size: 2.25rem; /* Equivalent to text-4xl in Tailwind */
+    line-height: 2.5rem;
+  }
+  h2 {
+    font-size: 1.875rem; /* Equivalent to text-3xl in Tailwind */
+    line-height: 2.25rem;
+  }
+  h3 {
+    font-size: 1.5rem; /* Equivalent to text-2xl in Tailwind */
+    line-height: 2rem;
+  }
+  h4 {
+    font-size: 1.25rem; /* Equivalent to text-xl in Tailwind */
+    line-height: 1.75rem;
+  }
+  h5 {
+    font-size: 1.125rem; /* Equivalent to text-lg in Tailwind */
+    line-height: 1.5rem;
+  }
+  h6 {
+    font-size: 1rem; /* Equivalent to text-base in Tailwind */
+    line-height: 1.5rem;
+  }
 }
 
 @layer components {
-    .text-color-auth {
-        @apply text-[#273144];
-    }
+  .text-color-auth {
+    @apply text-[#273144];
+  }
+
+  .custom-text-color-home {
+    color: #c9ced6;
+  }
+
+  .custom-brand-primary-pink-color {
+    background-color: #eb568e;
+  }
+
+  .custom-black-color {
+    background-color: #0b101b;
+  }
+
+  .custom-brand-primary-blue-color {
+    background-color: #144ee3;
+  }
+
+  .custom-lite-color {
+    background-color: #c9ced6;
+  }
+
+  .custom-grey-color {
+    background-color: rgba(24, 30, 41, 1);
+  }
+
+  .custom-light-grey-color {
+    background-color: rgba(24, 30, 41, 0.22);
+  }
+
+  .custom-border-color {
+    border-color: #353c4a;
+  }
+
+
+  /* When logged in table color */
+  .custom-backgroud-history {
+    background-color: rgba(21, 26, 36, 1);
+  }
+
+  .custom-table-header-fill-loggedin {
+    background-color: #0d1117;
+  }
+
+  .custom-table-row-fill-loggedin {
+    background-color: rgba(24, 30, 41, 0.22);
+  }
+
+  .custom-table-border-color {
+    border-color: rgba(53, 60, 74, 0.22);
+  }
+
+  /*  */
+
+  .custom-gradient-text {
+    background-image: linear-gradient(
+      to right,
+      #144ee3 0%,
+      #eb568e 33%,
+      #a353aa 66%,
+      #144ee3 100%
+    );
+    -webkit-background-clip: text;
+    background-clip: text;
+    color: transparent;
+    -webkit-text-fill-color: transparent;
+  }
 }

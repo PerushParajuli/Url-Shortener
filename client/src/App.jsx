@@ -5,6 +5,7 @@ import { Routes, Route } from "react-router-dom";
 import SignUpConfirmation from "./assets/pages/SignUpConfirmation";
 import Home from "./assets/pages/Home";
 
+
 const App = () => {
   return (
     <div>

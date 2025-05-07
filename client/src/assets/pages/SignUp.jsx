@@ -1,3 +1,4 @@
+
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { AiOutlineEyeInvisible } from "react-icons/ai";
 import { AiOutlineEye } from "react-icons/ai";
@@ -5,7 +6,11 @@ import { FcGoogle } from "react-icons/fc";
 import { useEffect, useReducer } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
+import Cookies from "js-cookie"
 
+// =====================
+// Action Types for Reducer
+// =====================
 const SET_EMAIL = "SET_EMAIL";
 const SET_PASSWORD = "SET_PASSWORD";
 const SET_SHOW_PASSWORD = "SET_SHOW_PASSWORD";
@@ -14,6 +19,9 @@ const SET_EMAIL_MESSAGE = "SET_EMAIL_MESSAGE";
 const SET_ALLOW_SUBMISSION = "SET_ALLOW_SUBMISSION";
 const SET_LOADER = "SET_LOADER";
 
+// =====================
+// Initial State for Reducer
+// =====================
 const initialState = {
   email: "",
   password: "",
@@ -24,6 +32,10 @@ const initialState = {
   loader: false,
 };
 
+// =====================
+// Reducer Function
+// Handles state transitions based on dispatched actions
+// =====================
 const reducer = (state, action) => {
   switch (action.type) {
     case SET_EMAIL:
@@ -40,6 +52,8 @@ const reducer = (state, action) => {
       return { ...state, allowSubmission: action.payload };
     case SET_LOADER:
       return { ...state, loader: action.payload };
+    default:
+      return state; // Added default case for safety
   }
 };
 
@@ -47,6 +61,9 @@ const SignUp = () => {
   const navigate = useNavigate();
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  // =====================
+  // Handles form submission for sign-up
+  // =====================
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -57,8 +74,10 @@ const SignUp = () => {
         "http://localhost:3002/api/user/auth/sendVerificationToken";
 
       try {
+        // Show loader while processing
         dispatch({ type: SET_LOADER, payload: true });
-        
+
+        // Send POST request to backend for account creation
         const res = await fetch(apiEndPoint, {
           method: "POST",
           body: JSON.stringify({ email, password }),
@@ -68,23 +87,29 @@ const SignUp = () => {
           credentials: "include",
         });
 
+        // Handle error responses from backend
         if (!res.ok) {
           dispatch({ type: SET_LOADER, payload: false });
           if (res.status === 409) {
             toast.error("Account with the same email already exists!");
           }
         } else if (res.status === 200) {
+          // On success, navigate to confirmation page
           const parsed = await res.json();
-          console.log(parsed);
+          Cookies.set("allowAccessToConfirmationPage", true, {expires: 1})
+
           navigate("/signup/confirmation");
         }
       } catch (error) {
+        // Log any unexpected errors
         console.error("Error submitting form:", error);
       }
     } else {
+      Cookies.set("allowAccessToConfirmationPage", false, {expires: 1})
+      // Show appropriate validation messages if submission is not allowed
       if (state.email === "") {
         dispatch({ type: SET_EMAIL_MESSAGE, payload: "Email needed!" });
-      } else if (password === "") {
+      } else if (state.password === "") {
         dispatch({ type: SET_PASSWORD_MESSAGE, payload: "Password needed!" });
       } else {
         dispatch({
@@ -96,10 +121,17 @@ const SignUp = () => {
     }
   };
 
+  // =====================
+  // Toggles password visibility in the input field
+  // =====================
   const toggleShowPassword = () => {
     dispatch({ type: SET_SHOW_PASSWORD, payload: !state.showPassword });
   };
 
+  // =====================
+  // Validates email and password fields in real-time
+  // Enables/disables form submission accordingly
+  // =====================
   useEffect(() => {
     const emailRegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordRegExp = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
@@ -116,14 +148,17 @@ const SignUp = () => {
   }, [state.password, state.email]);
 
   return (
-    <div className="signupContainer h-screen px-4 grid grid-col-1 md:grid-cols-2 place-items-center">
+    <div className="signupContainer min-h-screen px-4 grid grid-col-1 md:grid-cols-2 place-items-center">
+      {/* Loader shown during account creation */}
       {state.loader ? (
         <div className="flex items-center gap-x-4">
           <AiOutlineLoading3Quarters className="text-4xl animate-spin" />
           <p>Account creation in progress...</p>
         </div>
       ) : (
+        // Main sign-up form and info
         <div className="max-w-[450px] flex flex-col gap-y-5 text-color-auth">
+          {/* Heading and navigation to sign-in */}
           <div className="order-1">
             <h2 className="font-extrabold text-4xl sm:text-3xl">
               Create your account
@@ -133,11 +168,14 @@ const SignUp = () => {
             </p>
           </div>
 
+          {/* Google Sign-Up and Divider */}
           <div className="flex flex-col gap-y-4 order-3 sm:order-2">
+            {/* Google Sign-Up Button (not yet implemented) */}
             <button className="order-2 sm:order-1 w-full flex items-center gap-x-2 py-3 sm:py-2 justify-center border border-slate-300 rounded-sm hover:bg-slate-100 cursor-pointer">
               <FcGoogle className="text-xl" /> Continue with Google
             </button>
 
+            {/* Divider */}
             <div className="order-1 sm:order-2 flex items-center gap-x-4">
               <div className="flex-grow bg-slate-300 h-[1px]"></div>
               <span className="uppercase text-slate-600 font-semibold">OR</span>
@@ -145,12 +183,13 @@ const SignUp = () => {
             </div>
           </div>
 
+          {/* Sign-Up Form */}
           <form
             method="post"
             className="flex flex-col gap-y-5 text-color-auth order-2 sm:order-3"
             onSubmit={handleSubmit}
           >
-            {/* Email */}
+            {/* Email Input */}
             <div className="flex flex-col gap-y-1">
               <label htmlFor="email" className="font-semibold ">
                 Email
@@ -164,10 +203,11 @@ const SignUp = () => {
                   dispatch({ type: SET_EMAIL, payload: e.target.value })
                 }
               />
+              {/* Email validation message */}
               <span className="text-sm text-red-600">{state.emailMessage}</span>
             </div>
 
-            {/* Password */}
+            {/* Password Input */}
             <div className="flex flex-col gap-y-1 order-4">
               <label htmlFor="password" className="font-semibold ">
                 Password
@@ -183,6 +223,7 @@ const SignUp = () => {
                   }
                 />
 
+                {/* Toggle password visibility button */}
                 {state.password &&
                   (state.showPassword ? (
                     <button
@@ -202,12 +243,13 @@ const SignUp = () => {
                     </button>
                   ))}
               </div>
+              {/* Password validation message */}
               <span className="text-sm text-red-600">
                 {state.passwordMessage}
               </span>
             </div>
 
-            {/* Submit button */}
+            {/* Submit Button */}
             <button
               type={"submit"}
               className={`w-full ${
@@ -218,6 +260,7 @@ const SignUp = () => {
             </button>
           </form>
 
+          {/* Terms and Policies Notice */}
           <span className="order-6">
             By creating an account, you agree to /___/ Terms of Service, Privacy
             Policy and Acceptable Use Policy.
@@ -225,12 +268,14 @@ const SignUp = () => {
         </div>
       )}
 
+      {/* Right Side: Illustration Image (hidden on small screens) */}
       <div className="hidden md:block h-full w-full">
         <img
           src={"https://s.locker.io/resources/16181210/sign-up.jpg"}
           className="h-full w-full object-cover"
         />
       </div>
+      {/* Toast notifications container */}
       <ToastContainer position="top-right" />
     </div>
   );
@@ -238,5 +283,8 @@ const SignUp = () => {
 
 export default SignUp;
 
-// Implement actual authentication logic for google
-// Password Strength Indicator
+// =====================
+// TODOs / Future Improvements
+// =====================
+// - Implement actual authentication logic for Google sign-up
+// - Add a password strength indicator for better UX

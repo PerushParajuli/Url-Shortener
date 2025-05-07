@@ -1,3 +1,4 @@
+
 import { AiOutlineEyeInvisible } from "react-icons/ai";
 import { AiOutlineEye } from "react-icons/ai";
 import { FcGoogle } from "react-icons/fc";
@@ -5,7 +6,9 @@ import { useEffect, useReducer } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
 
-// Action Types
+// =====================
+// Action Types for Reducer
+// =====================
 const SET_EMAIL = "SET_EMAIL";
 const SET_PASSWORD = "SET_PASSWORD";
 const SET_SHOW_PASSWORD = "SET_SHOW_PASSWORD";
@@ -13,6 +16,9 @@ const SET_PASSWORD_MESSAGE = "SET_PASSWORD_MESSAGE";
 const SET_EMAIL_MESSAGE = "SET_EMAIL_MESSAGE";
 const SET_ALLOW_SUBMISSION = "SET_ALLOW_SUBMISSION";
 
+// =====================
+// Initial State for Reducer
+// =====================
 const initialState = {
   email: "",
   password: "",
@@ -22,6 +28,10 @@ const initialState = {
   allowSubmission: false,
 };
 
+// =====================
+// Reducer Function
+// Handles state transitions based on dispatched actions
+// =====================
 const reducer = (state, action) => {
   switch (action.type) {
     case SET_EMAIL:
@@ -36,6 +46,8 @@ const reducer = (state, action) => {
       return { ...state, emailMessage: action.payload };
     case SET_ALLOW_SUBMISSION:
       return { ...state, allowSubmission: action.payload };
+    default:
+      return state; // Added default case for safety
   }
 };
 
@@ -43,6 +55,9 @@ const SignIn = () => {
   const navigate = useNavigate();
   const [state, dispatch] = useReducer(reducer, initialState);
 
+  // =====================
+  // Handles form submission for sign-in
+  // =====================
   const handleSubmit = async (e) => {
     e.preventDefault();
 
@@ -51,6 +66,7 @@ const SignIn = () => {
       const email = state.email;
       const password = state.password;
       try {
+        // Send POST request to backend for authentication
         const res = await fetch(apiEndPoint, {
           body: JSON.stringify({ email, password }),
           headers: {
@@ -60,6 +76,7 @@ const SignIn = () => {
           credentials: "include",
         });
 
+        // Handle different error responses from backend
         if (!res.ok) {
           switch (res.status) {
             case 404:
@@ -71,14 +88,19 @@ const SignIn = () => {
             case 500:
               console.log("Internal Server Error");
               return;
+            default:
+              break;
           }
           throw new Error(`Error logging the user!`);
         }
+        // Redirect to home page on successful login
         redirect("/home");
       } catch (error) {
+        // Log any unexpected errors
         console.error(`Problem logging the user: ${error}`);
       }
     } else {
+      // Show appropriate validation messages if submission is not allowed
       if (state.email === "") {
         dispatch({ type: SET_EMAIL_MESSAGE, payload: "Email needed!" });
       } else if (state.password === "") {
@@ -93,11 +115,17 @@ const SignIn = () => {
     }
   };
 
+  // =====================
+  // Toggles password visibility in the input field
+  // =====================
   const toggleShowPassword = () => {
     dispatch({ type: SET_SHOW_PASSWORD, payload: !state.showPassword });
   };
 
-  // Handles password and email validation
+  // =====================
+  // Validates email and password fields in real-time
+  // Enables/disables form submission accordingly
+  // =====================
   useEffect(() => {
     const emailRegExp = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
     const passwordRegExp = /^(?=.*\d)(?=.*[a-z])(?=.*[A-Z])(?=.*[\W_]).{8,}$/;
@@ -115,7 +143,9 @@ const SignIn = () => {
 
   return (
     <div className="signupContainer min-h-screen px-4 grid grid-col-1 md:grid-cols-2 place-items-center">
+      {/* Left Side: Form and Info */}
       <div className="max-w-[450px] flex flex-col gap-y-5 text-color-auth">
+        {/* Heading and navigation to signup */}
         <div className="order-1">
           <h2 className="font-extrabold text-4xl sm:text-3xl">
             Log in and start sharing
@@ -125,11 +155,14 @@ const SignIn = () => {
           </p>
         </div>
 
+        {/* Google Sign-In and Divider */}
         <div className="flex flex-col gap-y-4 order-3 sm:order-2">
+          {/* Google Sign-In Button (not yet implemented) */}
           <button className="order-2 sm:order-1 w-full flex items-center gap-x-2 py-3 sm:py-2 justify-center border border-slate-300 rounded-sm hover:bg-slate-100 cursor-pointer">
             <FcGoogle className="text-xl" /> Continue with Google
           </button>
 
+          {/* Divider */}
           <div className="order-1 sm:order-2 flex items-center gap-x-4">
             <div className="flex-grow bg-slate-300 h-[1px]"></div>
             <span className="uppercase text-slate-600 font-semibold">OR</span>
@@ -137,12 +170,13 @@ const SignIn = () => {
           </div>
         </div>
 
+        {/* Sign-In Form */}
         <form
           method="post"
           className="flex flex-col gap-y-5 text-color-auth order-2 sm:order-3"
           onSubmit={handleSubmit}
         >
-          {/* Email */}
+          {/* Email Input */}
           <div className="flex flex-col gap-y-1">
             <label htmlFor="email" className="font-semibold ">
               Email
@@ -156,10 +190,11 @@ const SignIn = () => {
                 dispatch({ type: SET_EMAIL, payload: e.target.value })
               }
             />
+            {/* Email validation message */}
             <span className="text-sm text-red-600">{state.emailMessage}</span>
           </div>
 
-          {/* Password */}
+          {/* Password Input */}
           <div className="flex flex-col gap-y-1 order-4">
             <label htmlFor="password" className="font-semibold ">
               Password
@@ -175,6 +210,7 @@ const SignIn = () => {
                 }
               />
 
+              {/* Toggle password visibility button */}
               {state.password &&
                 (state.showPassword ? (
                   <button
@@ -194,15 +230,17 @@ const SignIn = () => {
                   </button>
                 ))}
             </div>
+            {/* Password validation message */}
             <span className="text-sm text-red-600">
               {state.passwordMessage}
             </span>
+            {/* Forgot password link (not yet implemented) */}
             <span className="my-3 ml-auto underline text-blue-600 hover:text-blue-700 cursor-pointer">
               Forget your password?
             </span>
           </div>
 
-          {/* Submit button */}
+          {/* Submit Button */}
           <button
             type={"submit"}
             className={`w-full ${
@@ -213,18 +251,21 @@ const SignIn = () => {
           </button>
         </form>
 
+        {/* Terms and Policies Notice */}
         <span className="order-6">
           By Logging in with an account, you agree to /___/ Terms of Service,
           Privacy Policy and Acceptable Use Policy.
         </span>
       </div>
 
+      {/* Right Side: Illustration Image (hidden on small screens) */}
       <div className="hidden md:block h-full w-full">
         <img
           src={"https://s.locker.io/resources/16181210/sign-up.jpg"}
           className="h-full w-full object-cover"
         />
       </div>
+      {/* Toast notifications container */}
       <ToastContainer position="top-right" />
     </div>
   );
@@ -232,6 +273,8 @@ const SignIn = () => {
 
 export default SignIn;
 
-// Backend Integration
-// Implement actual authentication logic for google
-// Password Strength Indicator
+// =====================
+// TODOs / Future Improvements
+// =====================
+// - Implement actual authentication logic for Google sign-in
+// - Add a password strength indicator for better UX
