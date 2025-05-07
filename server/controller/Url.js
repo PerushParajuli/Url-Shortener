@@ -1,5 +1,5 @@
 const urlModel = require("../model/Url");
-const { nanoid } = require("nanoid");
+const { nanoid } = import("nanoid");
 const validUrl = require("valid-url");
 const { URL } = require("url");
 const { default: mongoose } = require("mongoose");

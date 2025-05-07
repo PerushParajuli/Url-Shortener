@@ -17,7 +17,7 @@ const {
 const checkRole = require("../middleware/admin/checkRole");
 const isActive = require("../middleware/isActive");
 const verificationTokenSenderMiddleware = require("../middleware/Signup/verificationTokenSender");
-const verificationTokenCheckerMiddleware = require("../middleware/SignUp/verificationTokenCheker");
+const verificationTokenCheckerMiddleware = require("../middleware/Signup/verificationTokenCheker");
 
 // Endpoint to send verification Token
 router.post(
