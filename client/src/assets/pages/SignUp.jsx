@@ -1,4 +1,3 @@
-
 import { AiOutlineLoading3Quarters } from "react-icons/ai";
 import { AiOutlineEyeInvisible } from "react-icons/ai";
 import { AiOutlineEye } from "react-icons/ai";
@@ -6,7 +5,7 @@ import { FcGoogle } from "react-icons/fc";
 import { useEffect, useReducer } from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { ToastContainer, toast } from "react-toastify";
-import Cookies from "js-cookie"
+import Cookies from "js-cookie";
 
 // =====================
 // Action Types for Reducer
@@ -74,9 +73,8 @@ const SignUp = () => {
         "http://localhost:3002/api/user/auth/sendVerificationToken";
 
       try {
-        // Show loader while processing
-        dispatch({ type: SET_LOADER, payload: true });
-
+                  // Show loader while processing
+                  dispatch({ type: SET_LOADER, payload: true });
         // Send POST request to backend for account creation
         const res = await fetch(apiEndPoint, {
           method: "POST",
@@ -87,17 +85,19 @@ const SignUp = () => {
           credentials: "include",
         });
 
+        dispatch({type: SET_ALLOW_SUBMISSION, payload: false});
+
         // Handle error responses from backend
         if (!res.ok) {
           dispatch({ type: SET_LOADER, payload: false });
           if (res.status === 409) {
+            console.log("Account with same email exists")
             toast.error("Account with the same email already exists!");
           }
         } else if (res.status === 200) {
+
           // On success, navigate to confirmation page
           const parsed = await res.json();
-          Cookies.set("allowAccessToConfirmationPage", true, {expires: 1})
-
           navigate("/signup/confirmation");
         }
       } catch (error) {
@@ -105,7 +105,7 @@ const SignUp = () => {
         console.error("Error submitting form:", error);
       }
     } else {
-      Cookies.set("allowAccessToConfirmationPage", false, {expires: 1})
+      Cookies.set("allowAccessToConfirmationPage", false, { expires: 1 });
       // Show appropriate validation messages if submission is not allowed
       if (state.email === "") {
         dispatch({ type: SET_EMAIL_MESSAGE, payload: "Email needed!" });
@@ -148,7 +148,7 @@ const SignUp = () => {
   }, [state.password, state.email]);
 
   return (
-    <div className="signupContainer min-h-screen px-4 grid grid-col-1 md:grid-cols-2 place-items-center">
+    <div className="signupContainer min-h-screen p-2 grid grid-col-1 place-items-center">
       {/* Loader shown during account creation */}
       {state.loader ? (
         <div className="flex items-center gap-x-4">
@@ -269,12 +269,12 @@ const SignUp = () => {
       )}
 
       {/* Right Side: Illustration Image (hidden on small screens) */}
-      <div className="hidden md:block h-full w-full">
+      {/* <div className="hidden md:block h-full w-full">
         <img
           src={"https://s.locker.io/resources/16181210/sign-up.jpg"}
           className="h-full w-full object-cover"
         />
-      </div>
+      </div> */}
       {/* Toast notifications container */}
       <ToastContainer position="top-right" />
     </div>

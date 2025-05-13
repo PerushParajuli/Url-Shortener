@@ -63,8 +63,8 @@ const SignIn = () => {
 
     if (state.allowSubmission) {
       const apiEndPoint = "http://localhost:3002/api/user/auth/signin";
-      const email = state.email;
-      const password = state.password;
+      const email = state.email.trim();
+      const password = state.password.trim();
       try {
         // Send POST request to backend for authentication
         const res = await fetch(apiEndPoint, {
@@ -94,7 +94,7 @@ const SignIn = () => {
           throw new Error(`Error logging the user!`);
         }
         // Redirect to home page on successful login
-        redirect("/home");
+        navigate("/home");
       } catch (error) {
         // Log any unexpected errors
         console.error(`Problem logging the user: ${error}`);
@@ -142,7 +142,7 @@ const SignIn = () => {
   }, [state.password, state.email]);
 
   return (
-    <div className="signupContainer min-h-screen px-4 grid grid-col-1 md:grid-cols-2 place-items-center">
+    <div className="signupContainer min-h-screen p-4 grid grid-col-1 place-items-center">
       {/* Left Side: Form and Info */}
       <div className="max-w-[450px] flex flex-col gap-y-5 text-color-auth">
         {/* Heading and navigation to signup */}
@@ -259,12 +259,12 @@ const SignIn = () => {
       </div>
 
       {/* Right Side: Illustration Image (hidden on small screens) */}
-      <div className="hidden md:block h-full w-full">
+      {/* <div className="hidden md:block h-full w-full">
         <img
           src={"https://s.locker.io/resources/16181210/sign-up.jpg"}
           className="h-full w-full object-cover"
         />
-      </div>
+      </div> */}
       {/* Toast notifications container */}
       <ToastContainer position="top-right" />
     </div>
