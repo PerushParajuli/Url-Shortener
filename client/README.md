@@ -1,12 +1,86 @@
-# React + Vite
+# 🌟 URL Shortener Frontend (Client)
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+> The web user interface for the URL Shortener project—built with React + Vite.
 
-Currently, two official plugins are available:
+---
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+## 🏁 Quick Start
 
-## Expanding the ESLint configuration
+```sh
+npm install
+npm run client
+# → Visit http://localhost:5173
+```
 
-If you are developing a production application, we recommend using TypeScript and enable type-aware lint rules. Check out the [TS template](https://github.com/vitejs/vite/tree/main/packages/create-vite/template-react-ts) to integrate TypeScript and [`typescript-eslint`](https://typescript-eslint.io) in your project.
+---
+
+## ✨ What Can I Do Here?
+
+- Sign up or log in to manage your own URLs
+- Paste a long URL and instantly get a short version
+- Edit, delete, and view your URLs + click stats
+- Manage your account settings
+
+---
+
+## 🛠️ Tech Used
+
+- React 19
+- Vite (fastest hot reload!)
+- TailwindCSS (utility-first styling)
+- React Router v7
+- API requests via fetch/AJAX
+
+---
+
+## 🚦 Common Problems & FAQ
+
+**Q: Client can't talk to the backend?**  
+A: Make sure both are running. By default, client uses `http://localhost:5000` for API.
+
+**Q: How do I change the backend URL?**  
+A: Edit proxy/API endpoints in your code or `vite.config.js`.
+
+**Q: Styling broken or not updating?**  
+A: Restart the dev server. Tailwind sometimes needs a refresh!
+
+---
+
+## 📝 Customization
+
+- **Change theme/style:** Edit Tailwind config and `/src` files.
+- **Add a component:** Place new React components inside `/src/components/`.
+- **Build for production:**  
+  ```sh
+  npm run build
+  # Deploy 'dist/' folder to your host (Netlify, Vercel, etc.)
+  ```
+
+---
+
+## 📂 Directory Structure
+
+```
+client/
+├── public/
+├── src/
+│   ├── components/
+│   ├── pages/
+│   └── ...
+├── package.json
+```
+
+---
+
+## ✅ Available Scripts
+
+- `npm run client`   — Start dev server
+- `npm run build`    — Create production bundle
+- `npm run lint`     — Check code with ESLint
+- `npm run preview`  — Preview the production build locally
+
+---
+
+## 👀 Need Backend/API?
+
+See [../server/README.md](../server/README.md).
