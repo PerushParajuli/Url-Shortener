@@ -7,8 +7,6 @@
 
 ## 📊 Architecture Overview
 
-![Project Architecture Diagram](docs/architecture.mmd)
-
 - **Client**: React app (in `/client`)
 - **Server**: Node/Express API (in `/server`)
 - **Database**: MongoDB via Mongoose
